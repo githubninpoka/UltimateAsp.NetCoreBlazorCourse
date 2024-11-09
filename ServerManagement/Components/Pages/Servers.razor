@@ -1,0 +1,67 @@
+﻿@page "/servers"
+@inject NavigationManager NavigationManager
+
+<h3>Servers</h3>
+<br />
+<br />
+<div>
+    <div class="container-fluid shadow w-50 m-1">
+        <div class="row w-100 m-1">
+            @foreach (string city in cities)
+            {
+                <div class="col my-2 col-2">
+                    <div class="card my-1 align-items-center ">
+                        <img src="@($"/images/{city}.png")" class="card-img-top w-100" />
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary">@city</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="shadow w-50 m-1">
+    <ul>
+        @foreach (var server in servers)
+        {
+            <li>
+                @server.Name in @server.City is
+                <span style="@($"color : {(server.IsOnline?"green":"red")}")">
+                    @(server.IsOnline ? "Online" : "Offline")
+                </span>
+                <span>
+                    <a href="/servers/@server.ServerId" class="btn btn-link">Edit Server</a>
+                </span>
+
+                <span>
+                    <!-- The edit form here is used to hide the delete link from the browser at is now a post -->
+                    <EditForm Model="server" 
+                              FormName="@($"form-server-{server.ServerId}")"
+                              OnValidSubmit="@(() => DeleteServer(server.ServerId))"> 
+                        <button type="submit" class="btn btn-primary">Delete server @($"{server.ServerId}")</button>
+                    </EditForm>
+                </span>
+            </li>
+        }
+    </ul>
+</div>
+<div class="w-50">
+    <a href="/servers/add" class="btn btn-primary">Add Server</a>
+</div>
+
+@code {
+    private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
+    private List<string> cities = CitiesRepository.GetCities();
+
+    private void DeleteServer(int serverId)
+    {
+        if (serverId > 0)
+        {
+            ServersRepository.DeleteServer(serverId);
+            NavigationManager.NavigateTo("/servers");
+        }
+    }
+}

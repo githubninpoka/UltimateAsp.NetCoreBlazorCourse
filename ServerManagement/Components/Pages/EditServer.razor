@@ -1,0 +1,100 @@
+﻿@page "/servers/{id:int}"
+@inject NavigationManager NavigationManager // being able to use navigation manager to navigate the user after certain actions
+@code {
+    // the @page statement makes this component a routable component
+    // or 'page'
+    // also the :int addition forces the argument to only be an int
+    // and also as you can see there can be multiple @code sections.
+}
+
+<h3>EditServer</h3>
+
+@if (server != null) // in Blazor (razor?) syntax there is EditForm to represent forms
+                        // also specify Model for the binding to an object
+                        // also bind-Value to bind the value of an item to a property of an available object
+                        // FormName so the submitting client can send that along. the receiving server can then understand for which form the data was submitted.
+                        // so whenever data comes into the webserver identified by "formServer" in this case the "Submit" method will be called
+                        // there are also OnInvalidSubmit and OnValidSubmit to take different action when user messes up.
+                        // for input validation, here we'll use data annotation. see the class
+{
+    //<EditForm Model="server" FormName="formServer" OnSubmit="Submit">
+    <EditForm Model="server" FormName="formServer" OnValidSubmit="Submit"> <!-- this needed to use the whole validationthing, otherwise with errors (non valid submit) the function would still be called.. -->
+        <DataAnnotationsValidator></DataAnnotationsValidator> <!-- this wires up the checking of the model annotations-->
+        <ValidationSummary></ValidationSummary> <!-- this creates a place where errors can show up-->
+
+        <InputNumber @bind-Value="server.ServerId" hidden></InputNumber>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Name</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.Name" class="form-control"></InputText>
+            </div>
+            <div class="col-1">
+                <ValidationMessage For="() => server.Name"></ValidationMessage> <!-- specific message for a field-->
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">City</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.City" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Online?</label>
+            </div>
+            <div class="col-6">
+                <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Update</button>
+        &nbsp;
+        <a href="/servers" class="btn btn-secondary">Cancel</a>
+    </EditForm>
+
+
+}
+<br />
+
+@code {
+
+    [Parameter] // a mapped URL parameter needs this attribute
+    public int Id { get; set; } // as long as this property has the same name ( case insensitive )
+                                // that should map just fine.
+
+    //private Server? server;
+    [SupplyParameterFromForm(FormName ="formServer")] // with this attribute, when there is a submit, the route will be picked from the url and figures out that this property needs to get the values
+                                                       // formName is needed if there are multiple forms on the routable component.
+    private Server? server { get; set; } // for form submission to work, the former field must become a property
+
+    protected override void OnParametersSet() // is called when property is received from url
+    {
+        //server = ServersRepository.GetServerById(this.Id);
+        server ??= ServersRepository.GetServerById(this.Id); // OnParameterSet is called also when a form is submitted. by specifying this operator, the call to fetch the values from the repository
+                                                             // is only called when 'server' is still null (not on an update form)
+        base.OnParametersSet();
+    }
+    protected override Task OnParametersSetAsync() // you override this when you don't want to
+                                                   // do stuff synchronously but you need to, for instance
+                                                   // call an api to fetch data, or maybe search opensearch.
+                                                   // and hence you call an xxxAsync method.
+    {
+        return base.OnParametersSetAsync();
+    }
+
+    
+
+    private void Submit()
+    {
+        // now the local model is updated and it needs to be reflected back to the repository (this will become different with a dynamic repository)
+        if (server != null)
+        {
+            ServersRepository.UpdateServer(server.ServerId, server);
+        }
+        NavigationManager.NavigateTo("/servers"); // using the injected NavigationManager to move somewhere after pressing update button
+    }
+
+}
