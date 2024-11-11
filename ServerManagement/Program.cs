@@ -9,7 +9,8 @@ namespace ServerManagement
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorComponents();
+            builder.Services.AddRazorComponents().AddInteractiveServerComponents(); // this chained method for using SSR. see also below in the app section.
+            
 
             var app = builder.Build();
 
@@ -26,7 +27,8 @@ namespace ServerManagement
             app.UseStaticFiles();
             app.UseAntiforgery();
 
-            app.MapRazorComponents<App>();
+            app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+            
 
             app.Run();
         }
