@@ -10,7 +10,6 @@ namespace ServerManagement
 
             // Add services to the container.
             builder.Services.AddRazorComponents().AddInteractiveServerComponents(); // this chained method for using SSR. see also below in the app section.
-            
 
             var app = builder.Build();
 

@@ -1,0 +1,34 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="input-group my-2 w-50 shadow">
+    <input type="text" class="form-control" placeholder="Enter search, at least 3 characters"
+           @bind-value="SearchFilter"
+           @bind-value:event="oninput"
+           />
+    <button type="button" @onclick="SearchButtonClicked"><i class="fas fa-search"></i></button>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnSearchPerformedCallback { get; set; }
+
+    private string _searchFilter = "";
+
+    public string SearchFilter
+    {
+        get => _searchFilter;
+        set
+        {
+            _searchFilter = value;
+            if (_searchFilter != string.Empty)
+            {
+                OnSearchPerformedCallback.InvokeAsync(SearchFilter);
+            }
+        }
+    }
+
+    private void SearchButtonClicked()
+    {
+        OnSearchPerformedCallback.InvokeAsync(SearchFilter);
+    }
+}

@@ -1,0 +1,35 @@
+﻿@if (City != null)
+{
+    <div class="col my-2 col-2 ">
+        <div class="card my-1 align-items-center @(City == SelectedCityName? "border-primary border-2": "")">
+            <img src="@($"/images/{City}.png")" class="card-img-top w-100" />
+            <div class="card-body">
+                <button type="button" class="btn btn-primary" @onclick="@(() => ChangeSelectedCity(City))">@City</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string SelectedCityName { get; set; } = "Toronto";
+
+    [Parameter]
+    public string? City { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SelectCityCallback { get; set; }
+
+    private void ChangeSelectedCity(string cityName)
+    {
+        SelectCityCallback.InvokeAsync(cityName);
+        //this.SelectedCityName = cityName;
+        //this.servers = ServersRepository.GetServersByCity(this.selectedCityName);
+        //this.SearchFilter = string.Empty;
+
+        /*for (int i = 16; i<400;i++)
+        {
+            ServersRepository.AddServer(new Server { ServerId = i, Name = $"Server {i}", City = "Halifax" });
+        }*/
+    }
+}

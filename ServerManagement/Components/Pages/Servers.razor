@@ -1,134 +1,41 @@
-﻿@page "/servers"
+﻿@page "/"
+@page "/servers"
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer // this brings the entire (routable) component under the control of the server interactively.
 
 <h3>Servers</h3>
 <br />
 <br />
-<div>
-    <div class="container-fluid shadow w-50 m-1 rounded">
-        <div class="row w-100 m-1">
-            @foreach (string city in cities)
-            {
-                <div class="col my-2 col-2 ">
-                    <div class="card my-1 align-items-center @(city == selectedCityName? "border-primary border-2": "")">
-                        <img src="@($"/images/{city}.png")" class="card-img-top w-100" />
-                        <div class="card-body">
-                            <button type="button" class="btn btn-primary" @onclick="@(() => ChangeSelectedCity(city))">@city</button>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
+<CityListComponent 
+    @rendermode="InteractiveServer"
+    SelectCityCallback="HandleCitySelection"
+/>
 
-<div class="input-group my-2 w-50 shadow">
-    <input type="text" class="form-control" placeholder="Enter search filter"
-           @bind-value="SearchFilter"
-           @bind-value:event="oninput" />
-    <button type="button" @onclick="SearchButtonClicked" id="SearchButton"><i class="fas fa-search"></i></button>
-</div>
+<SearchServerComponent 
+    @rendermode="InteractiveServer"
+    OnSearchPerformedCallback="HandleSearch"
+    />
 
-<div class="shadow w-50 my-1 rounded">
-    <ul>
-        <!-- (here used to be a at sign)foreach (var server in servers)
-        { -->
-        <!-- this was the basic way to load a list, but with virtualize it becomes more performance proof if you have many items.-->
-        <Virtualize Items="this.servers" Context="server">
-            <li @key="server.ServerId" class="list-group-item">
-                <!-- this helps the web.js to update not the whole list when the list changes, but only the changed items. #performance -->
-                <div id="@($"server-{server.ServerId}")" class="w-100 py-2">
-                        @server.Name in @server.City is                    
-                    <span style="@($"color : {(server.IsOnline?"green":"red")}")">
-                        @(server.IsOnline ? "Online" : "Offline")
-                    </span>
-                    <span class="float-end">
-                        <a href="/servers/@server.ServerId" class="btn btn-link">Edit Server</a>
-                    </span>
+<ServerListComponent 
+    @rendermode="InteractiveServer" 
+    CityName="@_selectedCity"
+    SearchString="@_searchString"
+    />
 
-
-                    <span class="float-end">
-                        <!-- The edit form here is used to hide the delete link from the browser as it is now a post -->
-                        <EditForm Model="server"
-                                  FormName="@($"form-server-{server.ServerId}")"
-                                  OnValidSubmit="@(() => DeleteServer(server.ServerId))">
-                            <button type="submit" class="btn btn-primary">Delete</button>
-                        </EditForm>
-                    </span>
-
-                </div>
-            </li>
-        </Virtualize>
-        <!-- } this closing tag was for the foreach that was there before virtualize-->
-    </ul>
-</div>
-<div class="w-50">
-    <a href="/servers/add" class="btn btn-primary">Add Server</a>
-</div>
-
-<div>
-    <span> blaat </span><span class="bg-danger">yadda</span>
-</div>
-
-<div class="my-4">
-    <ServerComponent @rendermode="InteractiveServer"></ServerComponent>
-    <!-- the rendermode brings the component under control of the blazor.web.js and the dom tree is checked now -->
-
-</div>
 
 @code {
-    private List<Server> servers = ServersRepository.GetServersByCity("Toronto");
-    private List<string> cities = CitiesRepository.GetCities();
+    private string _selectedCity = "Toronto";
 
-    private string selectedCityName = "Toronto";
+    private string _searchString = "";
 
-    private string _searchFilter = "";
-    private string SearchFilter
+    private void HandleCitySelection(string selectedCity)
     {
-        get => _searchFilter;
-        set
-        {
-            _searchFilter = value;
-            if (_searchFilter != string.Empty)
-            {
-                servers = ServersRepository.SearchServers(_searchFilter);
-
-            }
-        }
+        _searchString = "";
+        _selectedCity = selectedCity;
     }
 
-    private void DeleteServer(int serverId)
+    private void HandleSearch(string searchString)
     {
-        if (serverId > 0)
-        {
-            var server = ServersRepository.GetServerById(serverId);
-            ServersRepository.DeleteServer(serverId);
-            if (server != null)
-            {
-                this.servers = ServersRepository.GetServersByCity(server.City!);
-            }
-            NavigationManager.NavigateTo("/servers");
-        }
-    }
-
-    private void ChangeSelectedCity(string cityName)
-    {
-        this.selectedCityName = cityName;
-        this.servers = ServersRepository.GetServersByCity(this.selectedCityName);
-        this.SearchFilter = string.Empty;
-
-        /*for (int i = 16; i<400;i++)
-        {
-            ServersRepository.AddServer(new Server { ServerId = i, Name = $"Server {i}", City = "Halifax" });
-        }*/
-    }
-
-
-    private void SearchButtonClicked()
-    {
-        this.servers = ServersRepository.SearchServers(SearchFilter);
-        this.selectedCityName = string.Empty;
-
+        _searchString = searchString;
     }
 }

@@ -1,0 +1,52 @@
+﻿@inject NavigationManager NavigationManager
+
+@if (this.servers != null && this.servers.Count > 0)
+{
+    <div class="shadow w-50 my-4 rounded">
+        <ul>
+            <!-- a foreach could also work, but with virtualize it becomes more performance proof if you have many items.-->
+            <Virtualize Items="this.servers" Context="server">
+                <ServerComponent Server="@server">
+                </ServerComponent>
+                <!-- I do not specify rendermode as it is inherited. this makes it easier if we want to switch to web assembly -->
+            </Virtualize>
+        </ul>
+    </div>
+}
+<div class="w-50">
+    <a href="/servers/add" class="btn btn-primary">Add Server</a>
+</div>
+
+@code {
+    [Parameter]
+    public string? CityName { get; set; }
+
+    private string _searchString = "";
+
+    [Parameter]
+    public string? SearchString
+    {
+        get
+        {
+            return _searchString;
+        }
+        set
+        {
+            _searchString = value;
+        }
+    }
+
+    private List<Server>? servers;
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(SearchString) || SearchString.Length < 3)
+        {
+            servers = ServersRepository.GetServersByCity(CityName ?? "Toronto");
+        }
+        else
+        {
+            servers = ServersRepository.SearchServers(_searchString);
+        }
+    }
+}

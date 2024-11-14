@@ -1,27 +1,46 @@
-﻿@if (server != null)
+﻿@inject NavigationManager NavigationManager
+
+@if (Server != null)
 {
-        <div data-name="@server.Name"
-             data-status="Server is @(server.IsOnline?"online":"offline")"
-             style="@($"color:{(server.IsOnline?"green":"red")}")">
-            @server.Name is @(server.IsOnline ? "Up" : "Down") in @server.City at @DateTime.Now
-            &nbsp;
-            <button type="button" @onclick="ChangeServerStatus" class="btn btn-primary">Toggle status</button>
+    <li @key="Server.ServerId" class="list-group-item">
+        <!-- this key above helps the web.js to update not the whole list when the list changes, but only the changed items. #performance -->
+        <div id="@($"server-{Server.ServerId}")" class="w-100 py-2 ">
+            @Server.Name in @Server.City is
+            <span style="@($"color : {(Server.IsOnline?"green":"red")}")">
+                @(Server.IsOnline ? "Online" : "Offline")
+            </span>
+            <span class="float-end">
+                <a href="/servers/@Server.ServerId" class="btn btn-link">Edit Server</a>
+            </span>
+
+
+            <span class="float-end">
+                <!-- The edit form here is used to hide the delete link from the browser as it is now a post -->
+                <EditForm Model="Server"
+                          FormName="@($"form-server-{Server.ServerId}")"
+                          OnValidSubmit="@(() => DeleteServer(Server.ServerId))">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </EditForm>
+            </span>
+
         </div>
+    </li>
 }
 
-
 @code {
-    private Server? server { get; set; } = new Server { City = "Toronto", Name = "New server" };
+    [Parameter]
+    public Server? Server { get; set; }
 
-
-
-    private void ChangeServerStatus()
+    private void DeleteServer(int serverId)
     {
-        if (server != null)
+        if (serverId > 0)
         {
-            server.IsOnline = !server.IsOnline;
+            var server = ServersRepository.GetServerById(serverId);
+            ServersRepository.DeleteServer(serverId);
+
+            //NavigationManager.NavigateTo("/servers");
+            NavigationManager.NavigateTo("/servers", true); // forces a reload, thereby triggering the getserversbycity. wasn't necessary in my case because i already yupdated the servers, but still, good to know
+
         }
     }
-
-
 }
