@@ -1,4 +1,6 @@
-﻿@if (cities != null && cities.Count > 0)
+﻿@namespace ServerManagement.Components.Controls
+
+@if (cities != null && cities.Count > 0)
 {
     <div class="container-fluid shadow w-50 m-1 rounded">
         <div class="row w-100 m-1">
@@ -24,11 +26,14 @@
 
     private string _selectedCity = "Toronto";
 
-
     private void HandleCitySelection(string selectedCity)
     {
         _selectedCity = selectedCity;
         SelectCityCallback.InvokeAsync(selectedCity);
     }
 
+    public void ClearCitySelection()
+    {
+        _selectedCity = string.Empty;
+    }
 }

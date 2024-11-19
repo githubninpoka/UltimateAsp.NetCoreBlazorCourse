@@ -1,4 +1,6 @@
-﻿@if (City != null)
+﻿@namespace ServerManagement.Components.Controls
+
+@if (City != null)
 {
     <div class="col my-2 col-2 ">
         <div class="card my-1 align-items-center @(City == SelectedCityName? "border-primary border-2": "")">
@@ -23,9 +25,7 @@
     private void ChangeSelectedCity(string cityName)
     {
         SelectCityCallback.InvokeAsync(cityName);
-        //this.SelectedCityName = cityName;
-        //this.servers = ServersRepository.GetServersByCity(this.selectedCityName);
-        //this.SearchFilter = string.Empty;
+
 
         /*for (int i = 16; i<400;i++)
         {

@@ -1,17 +1,28 @@
-﻿@inject NavigationManager NavigationManager
+﻿@namespace ServerManagement.Components.Controls
+@inject NavigationManager NavigationManager
 
 @if (this.servers != null && this.servers.Count > 0)
 {
-    <div class="shadow w-50 my-4 rounded">
-        <ul>
-            <!-- a foreach could also work, but with virtualize it becomes more performance proof if you have many items.-->
-            <Virtualize Items="this.servers" Context="server">
-                <ServerComponent Server="@server">
-                </ServerComponent>
-                <!-- I do not specify rendermode as it is inherited. this makes it easier if we want to switch to web assembly -->
-            </Virtualize>
-        </ul>
-    </div>
+
+    <table class="table table-striped">
+        <RepeaterComponent Items="servers">
+            <Header>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Status</th>
+                        <th>Ppl online</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </Header>
+            <Row Context="server">
+                <ServerComponent Server="server"></ServerComponent>
+            </Row>
+        </RepeaterComponent>
+    </table>
 }
 <div class="w-50">
     <a href="/servers/add" class="btn btn-primary">Add Server</a>
@@ -32,7 +43,10 @@
         }
         set
         {
-            _searchString = value;
+            if (value != null)
+            {
+                _searchString = value;
+            }
         }
     }
 

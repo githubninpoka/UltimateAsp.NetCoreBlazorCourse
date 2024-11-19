@@ -1,18 +1,19 @@
 ﻿@page "/"
 @page "/servers"
+
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer // this brings the entire (routable) component under the control of the server interactively.
 
-<h3>Servers</h3>
-<br />
+
 <br />
 <CityListComponent 
     @rendermode="InteractiveServer"
-    SelectCityCallback="HandleCitySelection"
-/>
+    @ref="cityListComponent"
+    SelectCityCallback="HandleCitySelection"></CityListComponent>
 
 <SearchServerComponent 
     @rendermode="InteractiveServer"
+    @ref="searchServerComponent"
     OnSearchPerformedCallback="HandleSearch"
     />
 
@@ -24,18 +25,23 @@
 
 
 @code {
+    private CityListComponent? cityListComponent;
+    private SearchServerComponent? searchServerComponent;
+
     private string _selectedCity = "Toronto";
 
     private string _searchString = "";
 
     private void HandleCitySelection(string selectedCity)
     {
-        _searchString = "";
         _selectedCity = selectedCity;
+        _searchString = string.Empty;
+        searchServerComponent?.ClearSearchFilter();
     }
 
     private void HandleSearch(string searchString)
     {
         _searchString = searchString;
+        cityListComponent?.ClearCitySelection();
     }
 }

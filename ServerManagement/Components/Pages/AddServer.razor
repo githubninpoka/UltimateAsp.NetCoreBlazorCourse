@@ -1,39 +1,35 @@
 ﻿@page "/servers/add"
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
-<h3>AddServer</h3>
+<h3>Add a Server</h3>
 
 <EditForm Model="server" FormName="AddServerForm" OnValidSubmit="Submit">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
 
-    <div class="row mb-3">
-        <div class="col-2">
-            <label class="col-form-label">Name</label>
-        </div>
-        <div class="col-6">
+    <FieldComponent Label="Servername">
+        <Control>
             <InputText @bind-Value="server.Name" class="form-control"></InputText>
-        </div>
-        <div class="col-1">
-            <ValidationMessage For="() => server.Name"></ValidationMessage> 
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-2">
-            <label class="col-form-label">City</label>
-        </div>
-        <div class="col-6">
+        </Control>
+        <ValidationControl>
+            <ValidationMessage For="() => server.Name"></ValidationMessage>
+        </ValidationControl>
+    </FieldComponent>
+
+    <FieldComponent Label="City">
+        <Control>
             <InputText @bind-Value="server.City" class="form-control"></InputText>
-        </div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-2">
-            <label class="col-form-label">Online?</label>
-        </div>
-        <div class="col-6">
+        </Control>
+        <ValidationControl>
+            <ValidationMessage For="() => server.City"></ValidationMessage>
+        </ValidationControl>
+    </FieldComponent>
+    <FieldComponent Label="Online?">
+        <Control>
             <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox>
-        </div>
-    </div>
+        </Control>
+    </FieldComponent>
+
     <button class="btn btn-primary" type="submit">Create</button>
     &nbsp;
     <a href="/servers" class="btn btn-secondary">Cancel</a>
