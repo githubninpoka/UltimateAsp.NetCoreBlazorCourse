@@ -26,6 +26,9 @@
 
     private string _selectedCity = "Toronto";
 
+    [Parameter]
+    public string SelectedCity { get => _selectedCity; set { _selectedCity = value; } }
+
     private void HandleCitySelection(string selectedCity)
     {
         _selectedCity = selectedCity;

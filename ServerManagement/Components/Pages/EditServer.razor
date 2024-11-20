@@ -1,5 +1,9 @@
 ﻿@page "/servers/{id:int}"
 @inject NavigationManager NavigationManager // being able to use navigation manager to navigate the user after certain actions
+
+
+@inject IJSRuntime JSRuntime
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock> <!-- being able to prevent the user from accidentally navigating away -->
 @code {
     // the @page statement makes this component a routable component
     // or 'page'
@@ -10,15 +14,16 @@
 <h3>EditServer</h3>
 
 @if (server != null) // in Blazor (razor?) syntax there is EditForm to represent forms
-                        // also specify Model for the binding to an object
-                        // also bind-Value to bind the value of an item to a property of an available object
-                        // FormName so the submitting client can send that along. the receiving server can then understand for which form the data was submitted.
-                        // so whenever data comes into the webserver identified by "formServer" in this case the "Submit" method will be called
-                        // there are also OnInvalidSubmit and OnValidSubmit to take different action when user messes up.
-                        // for input validation, here we'll use data annotation. see the class
+                    // also specify Model for the binding to an object
+                    // also bind-Value to bind the value of an item to a property of an available object
+                    // FormName so the submitting client can send that along. the receiving server can then understand for which form the data was submitted.
+                    // so whenever data comes into the webserver identified by "formServer" in this case the "Submit" method will be called
+                    // there are also OnInvalidSubmit and OnValidSubmit to take different action when user messes up.
+                    // for input validation, here we'll use data annotation. see the class
 {
     //<EditForm Model="server" FormName="formServer" OnSubmit="Submit">
-    <EditForm Model="server" FormName="formServer" OnValidSubmit="Submit"> <!-- this needed to use the whole validationthing, otherwise with errors (non valid submit) the function would still be called.. -->
+    <EditForm Model="server" FormName="formServer" OnValidSubmit="Submit">
+        <!-- this needed to use the whole validationthing, otherwise with errors (non valid submit) the function would still be called.. -->
         <DataAnnotationsValidator></DataAnnotationsValidator> <!-- this wires up the checking of the model annotations-->
         <ValidationSummary></ValidationSummary> <!-- this creates a place where errors can show up-->
 
@@ -62,7 +67,7 @@
                                 // that should map just fine.
 
     //private Server? server;
-    [SupplyParameterFromForm(FormName ="formServer")] // with this attribute, when there is a submit, the route will be picked from the url and figures out that this property needs to get the values
+    [SupplyParameterFromForm(FormName = "formServer")] // with this attribute, when there is a submit, the route will be picked from the url and figures out that this property needs to get the values
                                                        // formName is needed if there are multiple forms on the routable component.
     private Server? server { get; set; } // for form submission to work, the former field must become a property
 
@@ -81,7 +86,7 @@
         return base.OnParametersSetAsync();
     }
 
-    
+
 
     private void Submit()
     {
@@ -90,7 +95,22 @@
         {
             ServersRepository.UpdateServer(server.ServerId, server);
         }
-        NavigationManager.NavigateTo("/servers"); // using the injected NavigationManager to move somewhere after pressing update button
+        NavigationManager.NavigateTo($"/servers/back_from/{server!.City}"); // using the injected NavigationManager to move somewhere after pressing update button
+    }
+
+    async Task OnBeforeInternalNavigation(LocationChangingContext ctx)
+    {
+        // to make this method work when navigating to another page, remember that rendermode is what makes this prevention possible.
+        // and navigating from page to page is not 'under the control' of the rendermode, unless the rendermode is set on the overarching component. namely the App.razor. So I've set it there too.
+        if (!ctx.TargetLocation.Contains("servers"))
+        {
+
+            var IsConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+            if (!IsConfirmed)
+            {
+                ctx.PreventNavigation();
+            }
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿@namespace ServerManagement.Components.Controls
 @inject NavigationManager NavigationManager
 
+
 @if (Server != null)
 {
     <tr>
@@ -35,7 +36,7 @@
                 <button type="button" @onclick="@(() => {Server.IsOnline = !Server.IsOnline;})" class="btn btn-outline-success">On</button>
             }
             &nbsp;
-            <a href="/servers/@Server.ServerId" class="btn btn-link">Edit Server</a>
+            <a href="/server/@Server.ServerId" class="btn btn-link">Edit Server</a>
         </td>
         <td>
             <EditForm Model="Server"
@@ -64,4 +65,5 @@
 
         }
     }
+ 
 }

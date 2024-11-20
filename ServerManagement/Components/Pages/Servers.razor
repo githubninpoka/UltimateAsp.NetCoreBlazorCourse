@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/servers"
+@page "/servers/back_from/{CityName}"
 
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer // this brings the entire (routable) component under the control of the server interactively.
@@ -9,6 +10,7 @@
 <CityListComponent 
     @rendermode="InteractiveServer"
     @ref="cityListComponent"
+    SelectedCity="@_selectedCity"
     SelectCityCallback="HandleCitySelection"></CityListComponent>
 
 <SearchServerComponent 
@@ -25,6 +27,9 @@
 
 
 @code {
+    [Parameter] // this parameter is set to facilitate the multi page directive when navigating to this page
+    public string CityName { get; set; }
+
     private CityListComponent? cityListComponent;
     private SearchServerComponent? searchServerComponent;
 
@@ -44,4 +49,22 @@
         _searchString = searchString;
         cityListComponent?.ClearCitySelection();
     }
+
+    // @page "/servers/back_from/{CityName}"
+    // this method, together with a parameter and the alternative page directive
+    // allows for navigating directly to a selected city.
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (NavigationManager.Uri.Contains("back_from") &&
+                !string.IsNullOrWhiteSpace(CityName))
+            {
+                _selectedCity = CityName;
+                StateHasChanged();
+            }
+            
+        }
+    }
+
 }
