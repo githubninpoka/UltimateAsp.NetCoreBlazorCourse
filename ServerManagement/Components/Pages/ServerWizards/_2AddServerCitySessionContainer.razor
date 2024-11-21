@@ -1,0 +1,47 @@
+﻿@page "/serversessioncontainer/city"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject SessionStorageContainer SessionStorageContainer
+
+@if (server != null)
+{
+    <FieldComponent Label="City">
+        <Control>
+            <input type="text" @bind-value="server.City" class="form-control" placeholder="Enter the cityname"></input>
+        </Control>
+    </FieldComponent>
+
+    <button class="btn btn-primary" type="submit" @onclick="GoNext">Next</button>
+}
+else
+{
+    <span class="text-danger">Something went wrong, please try again.</span>
+}
+@if (errorMessage != null)
+{
+    <span class="text-danger"> @errorMessage</span>
+}
+
+@code {
+    private Server? server;
+    private string errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        server = await SessionStorageContainer.GetAsync();
+        //return base.OnParametersSetAsync();
+    }
+
+    async Task GoNext()
+    {
+        if (string.IsNullOrWhiteSpace(server.City))
+        {
+            errorMessage = "City cannot be empty.";
+        }
+        else
+        {
+            await SessionStorageContainer.SetAsync(server);
+            NavigationManager.NavigateTo("/serversessioncontainer/state");
+        }
+    }
+}

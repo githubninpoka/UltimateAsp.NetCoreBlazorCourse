@@ -1,0 +1,45 @@
+﻿@page "/serverdicontainer/city"
+@inject NavigationManager NavigationManager
+@inject DiServerContainer DiServerContainer
+
+@if (server != null)
+{
+    <FieldComponent Label="City">
+        <Control>
+            <input type="text" @bind-value="server.City" class="form-control" placeholder="City here"></input>
+        </Control>
+    </FieldComponent>
+    <button class="btn btn-primary" type="submit" @onclick="GoNext">Next</button>
+}
+else
+{
+    <span class="text-danger"> Something went wrong, please try again.</span>
+}
+@if (errorMessage != null)
+{
+    <span class="text-danger"> @errorMessage</span>
+}
+@code {
+    private Server? server;
+    private string errorMessage;
+
+    void GoNext()
+    {
+        if (string.IsNullOrWhiteSpace(server.City))
+        {
+            errorMessage = "City cannot be empty.";
+
+        }
+        else
+        {
+            DiServerContainer.Server = server;
+            NavigationManager.NavigateTo("/serverdicontainer/state");
+        }
+    }
+
+    protected override Task OnParametersSetAsync()
+    {
+        server = DiServerContainer.Server;
+        return base.OnParametersSetAsync();
+    }
+}

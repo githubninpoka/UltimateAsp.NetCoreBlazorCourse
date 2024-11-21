@@ -1,0 +1,48 @@
+﻿@page "/serverdicontainer/name"
+@inject NavigationManager NavigationManager
+@inject DiServerContainer DiServerContainer
+
+
+@if (server != null)
+{
+    <FieldComponent Label="Servername">
+        <Control>
+            <input type="text" @bind-value="server.Name" class="form-control" placeholder="Server Name here"></input>
+        </Control>
+    </FieldComponent>
+    <button class="btn btn-primary" type="submit" @onclick="GoNext">Next</button>
+}
+@if(errorMessage != null)
+{
+    <span class="text-danger"> @errorMessage</span>
+}
+
+@code {
+    private Server? server;
+
+    private string errorMessage;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            server = new Server();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    void GoNext()
+    {
+        if (!string.IsNullOrWhiteSpace(server.Name))
+        {
+            DiServerContainer.Server = server;
+            NavigationManager.NavigateTo("/serverdicontainer/city");
+        }
+        else
+        {
+            errorMessage = "Servername cannot be empty";
+        }
+    }
+
+}

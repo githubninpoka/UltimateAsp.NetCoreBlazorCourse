@@ -1,0 +1,53 @@
+﻿@page "/serversessioncontainer/name"
+@inject NavigationManager NavigationManager
+@inject SessionStorageContainer SessionStorageContainer
+
+
+@if (server != null)
+{
+    <FieldComponent Label="Servername">
+        <Control>
+            <input type="text" @bind-value="server.Name" class="form-control" placeholder="Enter Server Name"></input>
+        </Control>
+    </FieldComponent>
+
+    <button class="btn btn-primary" type="submit" @onclick="GoNext">Next</button>
+}
+else
+{
+    <span class="text-danger">Something went wrong, please try again.</span>
+}
+@if (errorMessage != null)
+{
+    <span class="text-danger">@errorMessage</span>
+}
+
+
+@code {
+    private Server? server;
+
+    private string errorMessage;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            server = new Server();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    async Task GoNext()
+    {
+        if (!string.IsNullOrWhiteSpace(server.Name))
+        {
+            await SessionStorageContainer.SetAsync(server);
+            NavigationManager.NavigateTo("/serversessioncontainer/city");
+        }
+        else
+        {
+            errorMessage = "Server Name cannot be empty.";
+        }
+    }
+}

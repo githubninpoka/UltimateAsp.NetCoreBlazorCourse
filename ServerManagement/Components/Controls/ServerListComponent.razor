@@ -25,8 +25,18 @@
     </table>
 }
 <div class="w-50">
-    <a href="/server" class="btn btn-primary">Add Server</a>
+    <a href="/server" class="btn btn-primary">Add Server</a> <span> With a form</span>
 </div>
+<br/>
+<div class="w-50">
+    <a href="/serversessioncontainer/name" class="btn btn-primary">Add Server</a> <span>Wizard 1 with Browser Session Storage</span>
+</div>
+<br/>
+<div class="w-50">
+    <a href="/serverdicontainer/name" class="btn btn-primary">Add Server</a> <span>Wizard 2 with a scoped DI type container</span>
+</div>
+
+
 
 @code {
     [Parameter]

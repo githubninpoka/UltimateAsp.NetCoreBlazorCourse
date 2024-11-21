@@ -1,6 +1,9 @@
-﻿@namespace ServerManagement.Components.Controls
-@inject NavigationManager NavigationManager
-
+﻿@inject NavigationManager NavigationManager
+@inject TorontoOnlineServersStore TorontoOnlineServersStore
+@inject OttawaOnlineServersStore OttawaOnlineServersStore
+@inject HalifaxOnlineServersStore HalifaxOnlineServersStore
+@inject CalgaryOnlineServersStore CalgaryOnlineServersStore
+@inject MontrealOnlineServersStore MontrealOnlineServersStore
 
 @if (Server != null)
 {
@@ -12,7 +15,7 @@
             @Server.City
         </td>
         <td style="color:@((Server.IsOnline?"green":"red"))">
-            @(Server.IsOnline? "online":"offline")
+            @(Server.IsOnline ? "online" : "offline")
         </td>
         <td>
             @if (Server.IsOnline)
@@ -29,19 +32,19 @@
         <td>
             @if (Server.IsOnline)
             {
-                <button type="button" @onclick="@(() => {Server.IsOnline = !Server.IsOnline;})" class="btn btn-outline-danger">Off</button>
+                <button type="button" @onclick="@(() => {SetServerStatus(false);})" class="btn btn-outline-danger">Off</button>
             }
             else
             {
-                <button type="button" @onclick="@(() => {Server.IsOnline = !Server.IsOnline;})" class="btn btn-outline-success">On</button>
+                <button type="button" @onclick="@(() => {SetServerStatus(true);})" class="btn btn-outline-success">On</button>
             }
             &nbsp;
             <a href="/server/@Server.ServerId" class="btn btn-link">Edit Server</a>
         </td>
         <td>
             <EditForm Model="Server"
-                      FormName="@($"form-server-{Server.ServerId}")"
-                      OnValidSubmit="@(() => DeleteServer(Server.ServerId))">
+            FormName="@($"form-server-{Server.ServerId}")"
+            OnValidSubmit="@(() => DeleteServer(Server.ServerId))">
                 <button type="submit" class="btn btn-primary">Delete</button>
             </EditForm>
         </td>
@@ -65,5 +68,75 @@
 
         }
     }
- 
+
+    private void SetServerStatus(bool status)
+    {
+        if (this.Server is not null)
+        {
+            if (this.Server.IsOnline != status)
+            {
+                int numberOfOnlineServers;
+                switch(Server.City)
+                {
+                    case "Toronto":
+                        numberOfOnlineServers=TorontoOnlineServersStore.GetNumberOfOnlineServers();
+                        if (status)
+                        {
+                            TorontoOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers + 1);
+                        }
+                        else if (numberOfOnlineServers > 1)
+                        {
+                            TorontoOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers - 1);
+                        }
+                        break;
+                    case "Calgary":
+                        numberOfOnlineServers = CalgaryOnlineServersStore.GetNumberOfOnlineServers();
+                        if (status)
+                        {
+                            CalgaryOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers + 1);
+                        }
+                        else if (numberOfOnlineServers > 1)
+                        {
+                            CalgaryOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers - 1);
+                        }
+                        break;
+                    case "Montreal":
+                        numberOfOnlineServers = MontrealOnlineServersStore.GetNumberOfOnlineServers();
+                        if (status)
+                        {
+                            MontrealOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers + 1);
+                        }
+                        else if (numberOfOnlineServers > 1)
+                        {
+                            MontrealOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers - 1);
+                        }
+                        break;
+                    case "Ottawa":
+                        numberOfOnlineServers = OttawaOnlineServersStore.GetNumberOfOnlineServers();
+                        if (status)
+                        {
+                            OttawaOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers + 1);
+                        }
+                        else if (numberOfOnlineServers > 1)
+                        {
+                            OttawaOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers - 1);
+                        }
+                        break;
+                    case "Halifax":
+                        numberOfOnlineServers = HalifaxOnlineServersStore.GetNumberOfOnlineServers();
+                        if (status)
+                        {
+                            HalifaxOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers + 1);
+                        }
+                        else if (numberOfOnlineServers > 1)
+                        {
+                            HalifaxOnlineServersStore.SetNumbersOfOnlineServers(numberOfOnlineServers - 1);
+                        }
+                        break;
+                }
+                this.Server.IsOnline = status;
+            }
+        }
+    }
+
 }

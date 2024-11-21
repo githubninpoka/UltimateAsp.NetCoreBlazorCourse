@@ -1,4 +1,6 @@
-﻿@page "/server/{id:int?}"
+﻿@page "/server/{id:int?}" 
+@* example of optional parameter triggering different behavior *@
+
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
@@ -10,7 +12,6 @@
 }
 else
 {
-
     <h3>Add Server</h3>
 }
 
@@ -50,7 +51,6 @@ else
     }
     else
     {
-
         <button class="btn btn-primary" type="submit">Create</button>
     }
     &nbsp;
@@ -70,13 +70,10 @@ else
     [SupplyParameterFromQuery]
     public string? City { get; set; }
 
-
     protected override void OnParametersSet() // is called when property is received from url
     {
-        //server = ServersRepository.GetServerById(this.Id);
         if (Id.HasValue)
         {
-
             server ??= ServersRepository.GetServerById(this.Id.Value); // OnParameterSet is called also when a form is submitted. by specifying this operator, the call to fetch the values from the repository
                                                                        // is only called when 'server' is still null (not on an update form)
             base.OnParametersSet();
@@ -120,7 +117,6 @@ else
         // and navigating from page to page is not 'under the control' of the rendermode, unless the rendermode is set on the overarching component. namely the App.razor. So I've set it there too.
         if (!ctx.TargetLocation.Contains("servers"))
         {
-
             var IsConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
             if (!IsConfirmed)
             {

@@ -1,4 +1,6 @@
 using ServerManagement.Components;
+using ServerManagement.StateStoreExamples;
+
 
 namespace ServerManagement
 {
@@ -10,6 +12,17 @@ namespace ServerManagement
 
             // Add services to the container.
             builder.Services.AddRazorComponents().AddInteractiveServerComponents(); // this chained method for using SSR. see also below in the app section.
+
+            // for using the session storage in the clients browser
+            builder.Services.AddTransient<SessionStorageContainer>();
+            builder.Services.AddScoped<DiServerContainer>();
+
+            // for using an observer per City
+            builder.Services.AddScoped<TorontoOnlineServersStore>();
+            builder.Services.AddScoped<MontrealOnlineServersStore>();
+            builder.Services.AddScoped<OttawaOnlineServersStore>();
+            builder.Services.AddScoped<CalgaryOnlineServersStore>();
+            builder.Services.AddScoped<HalifaxOnlineServersStore>();
 
             var app = builder.Build();
 

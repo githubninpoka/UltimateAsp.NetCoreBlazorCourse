@@ -1,0 +1,33 @@
+﻿@page "/serverdicontainer/state"
+@inject NavigationManager NavigationManager
+@inject DiServerContainer DiServerContainer
+
+
+@if (server != null)
+{
+    <FieldComponent Label="Servername">
+        <Control>
+            <InputCheckbox @bind-value="server.IsOnline" class="form-check-input"></InputCheckbox>
+        </Control>
+    </FieldComponent>
+    <button class="btn btn-primary" type="submit" @onclick="GoNext">Finish</button>
+}
+else
+{
+    <span class="text-danger"> Something went wrong, please try again.</span>
+}
+
+@code {
+    private Server? server;
+
+    protected override Task OnParametersSetAsync()
+    {
+        server = DiServerContainer.Server;
+        return base.OnParametersSetAsync();
+    }
+    void GoNext()
+    {
+        ServersRepository.AddServer(server);
+        NavigationManager.NavigateTo($"servers/back_from/{server.City}");
+    }
+}
