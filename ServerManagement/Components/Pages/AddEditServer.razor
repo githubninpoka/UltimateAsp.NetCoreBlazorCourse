@@ -3,6 +3,7 @@
 
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+@inject IServersEFCoreRepository db
 
 @inject IJSRuntime JSRuntime
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock> <!-- being able to prevent the user from accidentally navigating away -->
@@ -74,7 +75,7 @@ else
     {
         if (Id.HasValue)
         {
-            server ??= ServersRepository.GetServerById(this.Id.Value); // OnParameterSet is called also when a form is submitted. by specifying this operator, the call to fetch the values from the repository
+            server ??= db.GetServerById(this.Id.Value); // OnParameterSet is called also when a form is submitted. by specifying this operator, the call to fetch the values from the repository
                                                                        // is only called when 'server' is still null (not on an update form)
             base.OnParametersSet();
         }
@@ -102,11 +103,11 @@ else
         // now the local model is updated and it needs to be reflected back to the repository (this will become different with a dynamic repository)
         if (server != null && server.ServerId > 0)
         {
-            ServersRepository.UpdateServer(server.ServerId, server);
+            db.UpdateServer(server.ServerId, server);
         }
         else if (server != null)
         {
-            ServersRepository.AddServer(server);
+            db.AddServer(server);
         }
         NavigationManager.NavigateTo($"/servers/back_from/{server!.City}"); // using the injected NavigationManager to move somewhere after pressing update button
     }

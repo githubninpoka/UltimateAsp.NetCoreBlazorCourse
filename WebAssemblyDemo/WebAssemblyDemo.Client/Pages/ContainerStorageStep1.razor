@@ -1,0 +1,19 @@
+﻿@page "/containerstorage1"
+@inject NavigationManager NavigationManager
+@inject DiContainerStorage DiContainerStorage
+@rendermode InteractiveWebAssembly
+
+<h3>ContainerStorageStep1</h3>
+
+<input type="text" @bind-value="message" placeholder="text here" />
+<button type="button" @onclick="Next" class="btn btn-primary">Next</button>
+
+@code {
+    private string message = "";
+
+    private void Next()
+    {
+        DiContainerStorage.Set(message);
+        NavigationManager.NavigateTo("/containerstorage2");
+    }
+}

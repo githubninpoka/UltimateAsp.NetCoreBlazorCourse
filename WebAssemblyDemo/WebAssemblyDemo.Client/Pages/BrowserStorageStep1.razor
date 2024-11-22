@@ -1,0 +1,21 @@
+﻿@page "/browser_wasm_1"
+@* cant have protectedsessionstorage in webassembly so using jsruntime ? *@
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveWebAssembly
+
+<h3>BrowserStorage Step 1</h3>
+<br />
+<input type="text" class="form-control" @bind-value="data" />
+<button type="button" class="btn btn-primary" @onclick="GoNext">clickie</button>
+
+@code {
+    private string data = "";
+
+    private async Task GoNext()
+    {
+        await JSRuntime.InvokeVoidAsync("sessionStorage.setItem","demo-data",data);
+        NavigationManager.NavigateTo("/browser_wasm2");
+    }
+}

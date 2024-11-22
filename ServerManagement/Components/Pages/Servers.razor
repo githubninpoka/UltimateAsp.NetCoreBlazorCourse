@@ -9,6 +9,8 @@
 @inject HalifaxOnlineServersStore HalifaxOnlineServersStore
 @inject CalgaryOnlineServersStore CalgaryOnlineServersStore
 
+@inject IServersEFCoreRepository db
+
 @rendermode InteractiveServer // this brings the entire (routable) component under the control of the server interactively.
 
 
@@ -70,27 +72,27 @@ SearchString="@_searchString"
                 StateHasChanged();
             }
 
-            var serversToronto = ServersRepository.GetServersByCity("Toronto");
+            var serversToronto = db.GetServersByCity("Toronto");
             if (serversToronto is not null)
             {
                 TorontoOnlineServersStore.SetNumbersOfOnlineServers(serversToronto.Count(x => x.IsOnline));
             }
-            var serversMontreal = ServersRepository.GetServersByCity("Montreal");
+            var serversMontreal = db.GetServersByCity("Montreal");
             if (serversMontreal is not null)
             {
                 MontrealOnlineServersStore.SetNumbersOfOnlineServers(serversMontreal.Count(x => x.IsOnline));
             }
-            var serversOttawa = ServersRepository.GetServersByCity("Ottawa");
+            var serversOttawa = db.GetServersByCity("Ottawa");
             if (serversOttawa is not null)
             {
                 OttawaOnlineServersStore.SetNumbersOfOnlineServers(serversOttawa.Count(x => x.IsOnline));
             }
-            var serversCalgary = ServersRepository.GetServersByCity("Calgary");
+            var serversCalgary = db.GetServersByCity("Calgary");
             if (serversCalgary is not null)
             {
                 CalgaryOnlineServersStore.SetNumbersOfOnlineServers(serversCalgary.Count(x => x.IsOnline));
             }
-            var serversHalifax = ServersRepository.GetServersByCity("Halifax");
+            var serversHalifax = db.GetServersByCity("Halifax");
             if (serversHalifax is not null)
             {
                 HalifaxOnlineServersStore.SetNumbersOfOnlineServers(serversHalifax.Count(x => x.IsOnline));

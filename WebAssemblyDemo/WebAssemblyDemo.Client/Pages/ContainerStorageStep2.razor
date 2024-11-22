@@ -1,0 +1,23 @@
+﻿@page "/containerstorage2"
+@inject NavigationManager NavigationManager
+@inject DiContainerStorage DiContainerStorage
+@rendermode InteractiveWebAssembly
+
+<h3>ContainerStorageStep2</h3>
+
+<span class="text-success">@message</span>
+
+@code {
+    private string message = "";
+
+    protected override void OnParametersSet()
+    {
+        //message = DiContainerStorage.Get();
+        base.OnParametersSet();
+    }
+    protected override Task OnParametersSetAsync()
+    {
+        message = DiContainerStorage.Get();
+        return base.OnParametersSetAsync();
+    }
+}

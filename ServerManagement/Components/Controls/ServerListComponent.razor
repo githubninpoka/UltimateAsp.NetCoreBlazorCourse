@@ -1,5 +1,6 @@
 ﻿@namespace ServerManagement.Components.Controls
 @inject NavigationManager NavigationManager
+@inject IServersEFCoreRepository db
 
 @if (this.servers != null && this.servers.Count > 0)
 {
@@ -66,11 +67,11 @@
     {
         if (string.IsNullOrWhiteSpace(SearchString) || SearchString.Length < 3)
         {
-            servers = ServersRepository.GetServersByCity(CityName ?? "Toronto");
+            servers = db.GetServersByCity(CityName ?? "Toronto");
         }
         else
         {
-            servers = ServersRepository.SearchServers(_searchString);
+            servers = db.SearchServers(_searchString);
         }
     }
 }

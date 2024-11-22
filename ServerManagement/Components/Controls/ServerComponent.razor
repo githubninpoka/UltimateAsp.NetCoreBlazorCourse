@@ -5,6 +5,8 @@
 @inject CalgaryOnlineServersStore CalgaryOnlineServersStore
 @inject MontrealOnlineServersStore MontrealOnlineServersStore
 
+@inject IServersEFCoreRepository db
+
 @if (Server != null)
 {
     <tr>
@@ -61,8 +63,8 @@
     {
         if (serverId > 0)
         {
-            var server = ServersRepository.GetServerById(serverId);
-            ServersRepository.DeleteServer(serverId);
+            var server = db.GetServerById(serverId);
+            db.DeleteServer(serverId);
 
             NavigationManager.NavigateTo("/servers", true); // forces a reload, thereby triggering the getserversbycity.
 
@@ -135,6 +137,9 @@
                         break;
                 }
                 this.Server.IsOnline = status;
+                //var tempServer = db.GetServerById(this.Server.ServerId);
+                db.UpdateServer(this.Server.ServerId, this.Server);
+
             }
         }
     }

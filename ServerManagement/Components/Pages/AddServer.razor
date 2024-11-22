@@ -1,6 +1,7 @@
 ﻿@page "/servers/add"
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+@inject IServersEFCoreRepository db
 <h3>Add a Server</h3>
 
 <EditForm Model="server" FormName="AddServerForm" OnValidSubmit="Submit">
@@ -43,7 +44,7 @@
     {
         if (server != null)
         {
-            ServersRepository.AddServer(server);
+            db.AddServer(server);
             NavigationManager.NavigateTo($"/servers/back_from/{server.City}");
         }
     }

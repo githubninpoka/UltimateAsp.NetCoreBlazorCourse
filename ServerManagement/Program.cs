@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using ServerManagement.Components;
+using ServerManagement.Data;
+using ServerManagement.Models;
 using ServerManagement.StateStoreExamples;
 
 
@@ -24,6 +27,15 @@ namespace ServerManagement
             builder.Services.AddScoped<CalgaryOnlineServersStore>();
             builder.Services.AddScoped<HalifaxOnlineServersStore>();
 
+            builder.Services.AddDbContextFactory<ServerManagementDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ServerManagementDbFrankLiu"));
+            }
+            );
+            
+            // for interacting with the data
+            builder.Services.AddTransient<IServersEFCoreRepository, ServersEFCoreRepository>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -40,7 +52,7 @@ namespace ServerManagement
             app.UseAntiforgery();
 
             app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-            
+
 
             app.Run();
         }
