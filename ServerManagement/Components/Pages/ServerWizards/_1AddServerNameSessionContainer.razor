@@ -5,13 +5,19 @@
 
 @if (server != null)
 {
+    <EditForm Model="server" FormName="dummy">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
     <FieldComponent Label="Servername">
         <Control>
-            <input type="text" @bind-value="server.Name" class="form-control" placeholder="Enter Server Name"></input>
+            <input type="text" @bind-value="server.Name" class="form-control" placeholder="Enter Server Name">
         </Control>
+        <ValidationControl>
+            <ValidationMessage For="() => server.Name"></ValidationMessage>
+        </ValidationControl>
     </FieldComponent>
 
     <button class="btn btn-primary" type="submit" @onclick="GoNext">Next</button>
+    </EditForm>
 }
 else
 {

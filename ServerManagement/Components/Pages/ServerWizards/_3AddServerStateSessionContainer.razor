@@ -1,6 +1,7 @@
 ﻿@page "/serversessioncontainer/state"
 @inject NavigationManager NavigationManager
 @inject SessionStorageContainer SessionStorageContainer
+@inject IServersEFCoreRepository db
 
 @if (server != null)
 {
@@ -28,7 +29,7 @@ else
     {
         if (server != null)
         {
-            ServersRepository.AddServer(server);
+            db.AddServer(server);
             NavigationManager.NavigateTo($"/servers/back_from/{server.City}");
             await SessionStorageContainer.DeleteAsync();
         }

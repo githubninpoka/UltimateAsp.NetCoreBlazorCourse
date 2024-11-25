@@ -30,6 +30,8 @@ namespace ServerManagement
             builder.Services.AddDbContextFactory<ServerManagementDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("ServerManagementDbFrankLiu"));
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
             }
             );
             

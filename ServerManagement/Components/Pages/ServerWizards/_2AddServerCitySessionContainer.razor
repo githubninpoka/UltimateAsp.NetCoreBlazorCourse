@@ -41,6 +41,7 @@ else
         else
         {
             await SessionStorageContainer.SetAsync(server);
+            Console.WriteLine($"The server that was fed to me now contains: {server.Name??"x"} and city {server.City}");
             NavigationManager.NavigateTo("/serversessioncontainer/state");
         }
     }

@@ -1,6 +1,7 @@
 ﻿@page "/serverdicontainer/state"
 @inject NavigationManager NavigationManager
 @inject DiServerContainer DiServerContainer
+@inject IServersEFCoreRepository db
 
 
 @if (server != null)
@@ -27,7 +28,7 @@ else
     }
     void GoNext()
     {
-        ServersRepository.AddServer(server);
+        db.AddServer(server);
         NavigationManager.NavigateTo($"servers/back_from/{server.City}");
     }
 }
