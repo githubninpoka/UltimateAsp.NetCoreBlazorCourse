@@ -71,6 +71,8 @@ else
     [SupplyParameterFromQuery]
     public string? City { get; set; }
 
+    
+
     protected override void OnParametersSet() // is called when property is received from url
     {
         if (Id.HasValue)

@@ -1,0 +1,22 @@
+﻿@inject NavigationManager NavigationManager
+@inject ILogger<AddEditCounter> logger
+
+@rendermode InteractiveServer
+
+<p class="text-white">#nav changes: @pageChanges</p>
+
+@code {
+    private int pageChanges;
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += NavChange;
+    }
+
+    public void NavChange(object x, LocationChangedEventArgs e)
+    {
+        pageChanges++;
+        StateHasChanged();
+        logger.LogInformation("Navigated to {var}", e.Location);
+    }
+}
